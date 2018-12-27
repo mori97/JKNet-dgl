@@ -5,7 +5,7 @@ from .graph_conv_layer import GraphConvLayer
 
 
 class JKNetConcat(torch.nn.Module):
-    """An implementation of Jump Knowledge Network (arxiv 1806.03536) which
+    """An implementation of Jumping Knowledge Network (arxiv 1806.03536) which
     combine layers with concatenation.
 
     Args:
@@ -42,7 +42,7 @@ class JKNetConcat(torch.nn.Module):
 
 
 class JKNetMaxpool(torch.nn.Module):
-    """An implementation of Jump Knowledge Network (arxiv 1806.03536) which
+    """An implementation of Jumping Knowledge Network (arxiv 1806.03536) which
     combine layers with Maxpool.
 
     Args:

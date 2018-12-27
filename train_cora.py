@@ -1,4 +1,4 @@
-"""Train Jump Knowledge Network with Cora dataset.
+"""Train Jumping Knowledge Network with Cora dataset.
 """
 import argparse
 
