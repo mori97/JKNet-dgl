@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import torch
 import torch.nn.functional as F
 
-from modules import JKNetConcat
+from modules import JKNetConcat, JKNetMaxpool
 
 L2_PENALTY = 0.0005
 
@@ -89,10 +89,6 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--aggregation',
-                        help='The way to aggregate neighbourhoods',
-                        type=str, choices=('sum', 'mean', 'max'),
-                        default='sum')
     parser.add_argument('--cites-file',
                         help='.cites file',
                         type=str, default='./datasets/cora/cora.cites')
@@ -102,9 +98,17 @@ def main():
     parser.add_argument('--epochs', '-e',
                         help='number of epochs to train',
                         type=int, default=100)
+    parser.add_argument('--layer-aggregation',
+                        help='The way to aggregate outputs of layers',
+                        type=str, choices=('maxpool', 'concat'),
+                        default='maxpool')
     parser.add_argument('--learning-rate', '-l',
                         help='Learning rate',
                         type=float, default=0.005)
+    parser.add_argument('--node-aggregation',
+                        help='The way to aggregate neighbourhoods',
+                        type=str, choices=('sum', 'mean', 'max'),
+                        default='sum')
     parser.add_argument('--n-layers',
                         help='Number of convolution layers',
                         type=int, default=6)
@@ -122,8 +126,13 @@ def main():
     in_features = xs.shape[1]
     out_features = torch.max(ts_train).item() + 1
 
-    model = JKNetConcat(in_features, out_features, args.n_layers, args.n_units,
-                        args.aggregation).to(device)
+    model_args = (in_features, out_features, args.n_layers, args.n_units,
+                  args.node_aggregation)
+    if args.layer_aggregation == 'maxpool':
+        model = JKNetMaxpool(*model_args).to(device)
+    else:
+        model = JKNetConcat(*model_args).to(device)
+
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate,
                                  weight_decay=L2_PENALTY)
 
